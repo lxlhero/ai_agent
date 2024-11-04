@@ -46,3 +46,5 @@
         )
 
     3. 以prompt为核心构建action及role，写代码
+ 3. 用法
+   python excel_generator_by_document.py  description.txt --investment 3.0 --n-round 5
