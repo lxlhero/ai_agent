@@ -15,9 +15,7 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain_chroma import Chroma
 
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_API_KEY"] = "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"
-os.environ["OPENAI_API_KEY"] = "sk-QCq5pzghAUWmFHDlHYvKISaeoRP15F9y19p9VJKnmET3BlbkFJd0Ts_NtMzAaF1IRtUcbusQTPHlKpWv53rHyEoJzAkA"
+
 
 
 class DocumentAgent:
