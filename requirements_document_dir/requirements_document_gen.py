@@ -25,9 +25,6 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_API_KEY"] = "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"
-os.environ["OPENAI_API_KEY"] = "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"
 
 
 class DocumentAgent:
