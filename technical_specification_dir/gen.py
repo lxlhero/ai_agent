@@ -47,7 +47,7 @@ class DocumentAgent:
         self.introduction_prompt = PromptTemplate(
             input_variables=["product_description"],
             template=(
-                "请编写一段技术规范书引言，简要介绍文档的目的和范围，不少于300字。请包括文档的目标、涵盖的范围以及相关的参考文档和定义。以下是产品简述：\n{product_description}"
+                "请编写一段技术规范书引言，简要介绍文档的目的和范围。请包括文档的目标、涵盖的范围以及相关的参考文档和定义。以下是产品简述：\n{product_description}"
             )
         )
         # 系统概述
@@ -55,7 +55,7 @@ class DocumentAgent:
             input_variables=["product_description", "modules_info"],
             template=(
                 """
-                请提供一个技术规范书的系统概述，包括功能概览、用户特征和运行环境。功能概览应简要介绍系统的主要功能和模块, 不少于300字。
+                请提供一个技术规范书的系统概述，包括功能概览、用户特征和运行环境。功能概览应简要介绍系统的主要功能和模块。
                 产品简述：{product_description}
                 \n用户特征应描述不同用户角色（如管理员、用户、开发者）的需求和特征。运行环境应说明系统所需的硬件和软件环境。
                 以下是模块功能简介,请根据此信息完善系统概述: {modules_info}
@@ -68,7 +68,7 @@ class DocumentAgent:
             input_variables=["product_description", "modules_info"],
             template=(
                 """
-                请详细描述系统的总体架构和各个模块的设计, 不少于400字。
+                请详细描述系统的总体架构和各个模块的设计。
                 总体架构应包括数据层、服务层、应用层和表示层的职责。模块划分应详细介绍各个功能模块的设计和职责。
                 以下是模块功能简介,请根据此信息完善系统架构: {modules_info}
                 """
@@ -79,7 +79,7 @@ class DocumentAgent:
         self.function_module_detail_prompt = PromptTemplate(
             input_variables=["product_description", "modules_info"],
             template=(
-                """请详细说明系统的各个功能模块, 包括接入渠道、核心功能和智能功能, 不少于500字。接入渠道应描述系统支持的接入方式（如网页、移动应用、社交媒体）。
+                """请详细说明系统的各个功能模块, 包括接入渠道、核心功能和智能功能。接入渠道应描述系统支持的接入方式（如网页、移动应用、社交媒体）。
                 核心功能应介绍系统的基本功能模块（如用户管理、数据处理、业务逻辑）。智能功能应介绍系统的智能化功能（如AI、机器学习、数据分析）。
                 以下是模块功能简介,请根据此信息完善功能模块详细说明:{modules_info}
                 """
@@ -171,6 +171,7 @@ class DocumentAgent:
         """
             Generate the specified section of text and add a title and number.
         """
+        prompt = prompt_template.format(product_description=product_description, modules_info=modules_info)
         kwargs['system_message'] = self.system_message
         
         # Generate text content for the section
