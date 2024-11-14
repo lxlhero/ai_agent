@@ -24,7 +24,7 @@ from langchain.chains import LLMChain
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = ""
 
 class DocumentAgent:
     def __init__(self, overview_path, docx_name, title):

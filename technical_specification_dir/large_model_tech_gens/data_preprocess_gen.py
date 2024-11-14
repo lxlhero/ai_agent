@@ -33,7 +33,7 @@ from docx.shared import Pt
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = ""
 
 class DataPreprocessingModuleSpecGenerator:
     def __init__(self, overview_path, docx_name, title, product_name):
@@ -216,8 +216,8 @@ class DataPreprocessingModuleSpecGenerator:
 if __name__ == "__main__":
     generator = DataPreprocessingModuleSpecGenerator(
         "../overview.txt",
-        "数据预处理平台技术规范书.docx",
-        "数据预处理平台技术规范书",
-        "数据预处理平台"
+        "模型评估平台规范书.docx",
+        "模型评估平台规范书",
+        "模型评估平台"
     )
     generator.process()
