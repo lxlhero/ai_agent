@@ -28,12 +28,12 @@ from docx.shared import Pt
 # 模型保存与部署平台， 
 # 模型评估平台， 
 # 模型推理平台，
-# 模型优化平台
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-os.environ["OPENAI_API_KEY"] = ""
+os.environ["OPENAI_API_KEY"] = "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"
 
 class DataPreprocessingModuleSpecGenerator:
     def __init__(self, overview_path, docx_name, title, product_name):
@@ -52,6 +52,7 @@ class DataPreprocessingModuleSpecGenerator:
             技术规范书的要点是明确目的和范围、结构化和组织良好、详细和具体、准确性和可靠性，
             注意你编写的是大模型产品的功能性平台的技术规范书，例如数据预处理平台、模型推理平台等，所以要更贴合该平台的规范和特点
             不要去过多涉及该平台之外的功能，例如模型训练平台，就不要去写关于数据预处理或模型推理的内容，
+            特别注意，非数据预处理平台不要涉及数据预处理及标注的功能和内容
             同时针对整体的产品概述，撰写的内容应该要贴合产品的特点，例如产品是面向工业界的，那么撰写的内容就要贴合工业界的规范和特点
             注意每个段落不要在开头出现段落title,比如撰写引言时，不要出现引言二字
             """
@@ -216,8 +217,8 @@ class DataPreprocessingModuleSpecGenerator:
 if __name__ == "__main__":
     generator = DataPreprocessingModuleSpecGenerator(
         "../overview.txt",
-        "模型评估平台规范书.docx",
-        "模型评估平台规范书",
-        "模型评估平台"
+        "模型推理平台规范书.docx",
+        "模型推理平台规范书",
+        "模型推理平台"
     )
     generator.process()
