@@ -20,15 +20,7 @@ from langchain.chains import LLMChain
 from docx.shared import Pt
 
 
-# 大模型模块技术规范书生成器
-# 一次性生成以下所有模块的技术规范书
-# 模块: 
-# 数据预处理平台， 
-# 模型训练平台，  
-# 模型保存与部署平台， 
-# 模型评估平台， 
-# 模型推理平台
-
+# Agent 平台技术规范书生成器
 
 # 从环境变量中获取 OPENAI_API_KEY
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -53,15 +45,11 @@ class DataPreprocessingModuleSpecGenerator:
         
         # 系统prompt
         self.system_message = """
-            你是一个文档编写者，你的任务是根据产品概述和平台名称撰写技术规范书的段落,
-            此平台是该产品的组成部分，例如数据预处理平台、模型推理平台等，这是为该平台单独写技术规范书，
-            整个产品分为数据预处理平台，模型训练平台，模型保存与部署平台， 模型评估平台，模型推理平台，因此在撰写技术规范书时，
-            要专注于这个平台本身，而不是整个产品的全部功能，不要过多设计其他平台的功能。
+            你是一个文档编写者，你的任务是根据平台概述和服务名称撰写技术规范书的段落,
+            此服务是该瓶套的组成部分，这是为该服务单独写技术规范书，要专注于这个服务本身，而不是整个平台的全部功能，不要过多设计其他服务的功能。
             技术规范书的要点是明确目的和范围、结构化和组织良好、详细和具体、准确性和可靠性，
-            注意你编写的是大模型产品的功能性平台的技术规范书，例如数据预处理平台、模型推理平台等，所以要更贴合该平台的规范和特点
-            不要去过多涉及该平台之外的功能，例如模型训练平台，就不要去写关于数据预处理或模型推理的内容，
-            特别注意，非数据预处理平台不要涉及数据预处理及标注的功能和内容
-            同时针对整体的产品概述，撰写的内容应该要贴合产品的特点，例如产品是面向工业界的，那么撰写的内容就要贴合工业界的规范和特点
+            注意你编写的是AI AGENT平台的功能性服务的技术规范书，所以要更贴合该服务的规范和特点，不要去过多涉及该服务之外的功能。
+            同时针对整体的平台概述，撰写的内容应该要贴合平台的特点，例如平台是面向工业界的，那么撰写的内容就要贴合工业界的规范和特点
             注意每个段落不要在开头出现段落title,比如撰写引言时，不要出现引言二字。
             以下是具体的需求:
             """
@@ -259,34 +247,51 @@ def generate_all_platform_docs(overview_path, platforms):
 
 if __name__ == "__main__":
     # Define the list of platforms
-    product_name = "多模态大模型"
+    product_name = "Agent平台"
     platforms = [
         {
-            "docx_name": "数据预处理平台规范书.docx",
-            "title": f"{product_name}数据预处理平台规范书",
-            "product_name": "数据预处理平台"
+            "docx_name": "智能体管理服务技术规范书.docx",
+            "title": f"{product_name} - 智能体管理服务技术规范书",
+            "product_name": "智能体管理服务"
         },
         {
-            "docx_name": "模型训练平台规范书.docx",
-            "title": f"{product_name}模型训练平台规范书",
-            "product_name": "模型训练平台"
+            "docx_name": "任务执行服务技术规范书.docx",
+            "title": f"{product_name} - 任务执行服务技术规范书",
+            "product_name": "任务执行服务"
         },
         {
-            "docx_name": "模型保存与部署平台规范书.docx",
-            "title": f"{product_name}模型保存与部署平台规范书",
-            "product_name": "模型保存与部署平台"
+            "docx_name": "决策支持服务技术规范书.docx",
+            "title": f"{product_name} - 决策支持服务技术规范书",
+            "product_name": "决策支持服务"
         },
         {
-            "docx_name": "模型评估平台规范书.docx",
-            "title": f"{product_name}模型评估平台规范书",
-            "product_name": "模型评估平台"
+            "docx_name": "知识库管理服务技术规范书.docx",
+            "title": f"{product_name} - 知识库管理服务技术规范书",
+            "product_name": "知识库管理服务"
         },
         {
-            "docx_name": "模型推理平台规范书.docx",
-            "title": f"{product_name}模型推理平台规范书",
-            "product_name": "模型推理平台"
+            "docx_name": "用户交互服务技术规范书.docx",
+            "title": f"{product_name} - 用户交互服务技术规范书",
+            "product_name": "用户交互服务"
+        },
+        {
+            "docx_name": "数据分析和监控服务技术规范书.docx",
+            "title": f"{product_name} - 数据分析和监控服务技术规范书",
+            "product_name": "数据分析和监控服务"
+        },
+        {
+            "docx_name": "安全与隐私保护服务技术规范书.docx",
+            "title": f"{product_name} - 安全与隐私保护服务技术规范书",
+            "product_name": "安全与隐私保护服务"
+        },
+        {
+            "docx_name": "系统集成与服务扩展规范书.docx",
+            "title": f"{product_name} - 系统集成与服务扩展规范书",
+            "product_name": "系统集成与服务扩展"
         }
     ]
+
+
     
     # Path to the product overview
     overview_path = "../overview.txt"

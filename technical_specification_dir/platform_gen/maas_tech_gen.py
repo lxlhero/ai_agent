@@ -20,20 +20,19 @@ from langchain.chains import LLMChain
 from docx.shared import Pt
 
 
-#大模型技术规范书子模块生成器
-# 
-# 模块: 
-# 数据预处理平台， 
-# 模型训练平台，  
-# 模型保存与部署平台， 
-# 模型评估平台， 
-# 模型推理平台，
+# 从环境变量中获取 OPENAI_API_KEY
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+if openai_api_key is None:
+    raise ValueError("OPENAI_API_KEY environment variable is not set")
+else:
+    os.environ["OPENAI_API_KEY"] = str(openai_api_key)
+
+# Maas 平台技术规范书生成器
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-os.environ["OPENAI_API_KEY"] = "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"
 
 class DataPreprocessingModuleSpecGenerator:
     def __init__(self, overview_path, docx_name, title, product_name):
@@ -47,22 +46,22 @@ class DataPreprocessingModuleSpecGenerator:
         
         # 系统prompt
         self.system_message = """
-            你是一个文档编写者，你的任务是根据产品概述和平台名称撰写技术规范书的段落,
-            此平台是该产品的组成部分，例如数据预处理平台、模型推理平台等，这是为该平台单独写技术规范书，
+            你是一个文档编写者，你的任务是根据平台概述和服务名称撰写技术规范书的段落,
+            此服务是该瓶套的组成部分，这是为该服务单独写技术规范书，要专注于这个服务本身，而不是整个平台的全部功能，不要过多设计其他服务的功能。
             技术规范书的要点是明确目的和范围、结构化和组织良好、详细和具体、准确性和可靠性，
-            注意你编写的是大模型产品的功能性平台的技术规范书，例如数据预处理平台、模型推理平台等，所以要更贴合该平台的规范和特点
-            不要去过多涉及该平台之外的功能，例如模型训练平台，就不要去写关于数据预处理或模型推理的内容，
-            特别注意，非数据预处理平台不要涉及数据预处理及标注的功能和内容
-            同时针对整体的产品概述，撰写的内容应该要贴合产品的特点，例如产品是面向工业界的，那么撰写的内容就要贴合工业界的规范和特点
-            注意每个段落不要在开头出现段落title,比如撰写引言时，不要出现引言二字
+            注意你编写的是MaaS(Model as a Service)平台的功能性服务的技术规范书，所以要更贴合该服务的规范和特点，不要去过多涉及该服务之外的功能。
+            同时针对整体的平台概述，撰写的内容应该要贴合平台的特点，例如平台是面向工业界的，那么撰写的内容就要贴合工业界的规范和特点
+            注意每个段落不要在开头出现段落title,比如撰写引言时，不要出现引言二字。
+            以下是具体的需求:
             """
         
         # 各个部分的PromptTemplate
         self.prompts = {
             "introduction": PromptTemplate(
-                input_variables=["product_description", "module_name"],
+                input_variables=["system_message", "product_description", "module_name"],
                 template=(
                     """
+                    {system_message}
                     请编写一段关于{module_name}的技术规范书引言，简要介绍文档的目的和范围，不少于500字。
                     请包括文档的目标、涵盖的范围以及相关的参考文档和定义。
                     以下是产品简述：{product_description}
@@ -70,18 +69,20 @@ class DataPreprocessingModuleSpecGenerator:
                 )
             ),
             "system_overview": PromptTemplate(
-                input_variables=["product_description", "module_name"],
+                input_variables=["system_message", "product_description", "module_name"],
                 template=(
                     """
+                    {system_message}
                     请提供一个{module_name}的系统概述，该平台是下述产品简述的一部分，包括其主要功能和用途, 不少于600字。
                     产品简述：{product_description}
                     """
                 )
             ),
             "system_architecture": PromptTemplate(
-                input_variables=["product_description", "module_name"],
+                input_variables=["system_message", "product_description", "module_name"],
                 template=(
                     """
+                    {system_message}
                     请详细描述{module_name}的架构，该平台是下述产品简述的一部分，不少于800字。
                     架构描述应包括数据流、处理步骤和关键组件。
                     以下是产品简述：{product_description}
@@ -89,9 +90,10 @@ class DataPreprocessingModuleSpecGenerator:
                 )
             ),
             "function_module_description": PromptTemplate(
-                input_variables=["product_description", "module_name"],
+                input_variables=["system_message", "product_description", "module_name"],
                 template=(
                     """
+                    {system_message}
                     请详细描述{module_name}的功能模块，该平台是下述产品简述的一部分，不少于800字。
                     功能模块描述应包括每个模块的作用、输入输出和处理逻辑。
                     以下是产品简述：{product_description}
@@ -99,9 +101,10 @@ class DataPreprocessingModuleSpecGenerator:
                 )
             ),
             "technical_specification": PromptTemplate(
-                input_variables=["product_description", "module_name"],
+                input_variables=["system_message", "product_description", "module_name"],
                 template=(
                     """
+                    {system_message}
                     请描述{module_name}的技术规范，该平台是下述产品简述的一部分，不少于800字。
                     技术规范应定义模块的规范、部署要求等。
                     以下是产品简述：{product_description}
@@ -109,9 +112,10 @@ class DataPreprocessingModuleSpecGenerator:
                 )
             ),
             "testing_validation": PromptTemplate(
-                input_variables=["product_description", "module_name"],
+                input_variables=["system_message", "product_description", "module_name"],
                 template=(
                     """
+                    {system_message}
                     请编写测试和验证部分的文档，包括测试计划、验证和验收标准，该平台是下述产品简述的一部分，不少于400字。
                     测试计划应描述{module_name}的测试策略,不要写测试用例。
                     验证和验收标准应说明{module_name}的验证和验收标准。
@@ -120,9 +124,10 @@ class DataPreprocessingModuleSpecGenerator:
                 )
             ),
             "maintenance_support": PromptTemplate(
-                input_variables=["product_description", "module_name"],
+                input_variables=["system_message", "product_description", "module_name"],
                 template=(
                     """
+                    {system_message}
                     请描述{module_name}的维护和支持策略，包括维护计划和支持渠道，该平台是下述产品简述的一部分，不少于400字。
                     维护策略应说明{module_name}的维护计划和流程。
                     以下是产品简述：{product_description}
@@ -130,9 +135,10 @@ class DataPreprocessingModuleSpecGenerator:
                 )
             ),
             "conclusion": PromptTemplate(
-                input_variables=["product_description", "module_name"],
+                input_variables=["system_message", "product_description", "module_name"],
                 template=(
                     """
+                    {system_message}
                     请编写结论部分，简要总结{module_name}的主要内容和要点，该平台是下述产品简述的一部分，不少于500字。
                     总结应概述{module_name}的主要内容和要点。
                     下一步行动应说明文档发布后的下一步行动计划。
@@ -141,9 +147,10 @@ class DataPreprocessingModuleSpecGenerator:
                 )
             ),
             "appendix": PromptTemplate(
-                input_variables=["product_description", "module_name"],
+                input_variables=["system_message", "product_description", "module_name"],
                 template=(
                     """
+                    {system_message}
                     请编写附录部分，包括术语表和参考资料。
                     术语表应提供文档中使用的专业术语的解释。
                     参考资料应列出相关的标准、法规和其他参考文献。
@@ -163,14 +170,14 @@ class DataPreprocessingModuleSpecGenerator:
         return generated_text
 
 
-    def generate_section(self, document, prompt_template, section_title, product_description, module_name, **kwargs):
+    def generate_section(self, prompt_template, section_title, product_description, module_name, **kwargs):
         """
             Generate the specified section of text and add a title and number.
         """
-        kwargs['system_message'] = self.system_message
+        system_message = self.system_message
         
         # Generate text content for the section
-        section_content = self.generate_text(prompt_template, product_description=product_description, module_name=module_name)
+        section_content = self.generate_text(prompt_template, product_description=product_description, module_name=module_name, system_message = system_message, **kwargs)
         
         # Create a new paragraph with the title and content
         section_string = f"{section_title}\n{section_content}"
@@ -201,7 +208,7 @@ class DataPreprocessingModuleSpecGenerator:
         ]
 
         for index, section in enumerate(sections, start=1):
-            section_paragraph = self.generate_section(document, section["prompt"], f"{index}. {section['title']}", product_description, self.product_name)
+            section_paragraph = self.generate_section(section["prompt"], f"{index}. {section['title']}", product_description, self.product_name)
 
             # 清理多余的 * 和 #
             cleaned_paragraph = section_paragraph.replace('*', '').replace('#', '')
@@ -214,11 +221,79 @@ class DataPreprocessingModuleSpecGenerator:
         document.save(self.docx_name)
         logger.info(f"{self.product_name}技术规范书已保存为 {self.docx_name}")
 
+
+
+def generate_all_platform_docs(overview_path, platforms):
+    """
+    Generates technical specification documents for multiple platforms.
+
+    Args:
+        overview_path (str): Path to the overview text file.
+        platforms (list of dict): List of platform configurations, where each dictionary
+                                  contains 'docx_name', 'title', and 'product_name'.
+    """
+    for platform in platforms:
+        logger.info(f"Starting generation for {platform['product_name']}...")
+        generator = DataPreprocessingModuleSpecGenerator(
+            overview_path=overview_path,
+            docx_name=platform["docx_name"],
+            title=platform["title"],
+            product_name=platform["product_name"]
+        )
+        try:
+            generator.process()
+            logger.info(f"Successfully generated document for {platform['product_name']}!")
+        except Exception as e:
+            logger.error(f"Failed to generate document for {platform['product_name']}: {e}")
+
 if __name__ == "__main__":
-    generator = DataPreprocessingModuleSpecGenerator(
-        "../overview.txt",
-        "模型推理平台规范书.docx",
-        "模型推理平台规范书",
-        "模型推理平台"
-    )
-    generator.process()
+    # Define the list of platforms
+    product_name = "Maas平台"
+    platforms = [
+        {
+            "docx_name": "模型管理服务技术规范书.docx",
+            "title": f"{product_name} - 模型管理服务技术规范书",
+            "product_name": "模型管理服务"
+        },
+        {
+            "docx_name": "模型训练服务技术规范书.docx",
+            "title": f"{product_name} - 模型训练服务技术规范书",
+            "product_name": "模型训练服务"
+        },
+        {
+            "docx_name": "模型部署服务技术规范书.docx",
+            "title": f"{product_name} - 模型部署服务技术规范书",
+            "product_name": "模型部署服务"
+        },
+        {
+            "docx_name": "模型推理服务技术规范书.docx",
+            "title": f"{product_name} - 模型推理服务技术规范书",
+            "product_name": "模型推理服务"
+        },
+        {
+            "docx_name": "数据处理服务技术规范书.docx",
+            "title": f"{product_name} - 数据处理服务技术规范书",
+            "product_name": "数据处理服务"
+        },
+        {
+            "docx_name": "用户管理服务技术规范书.docx",
+            "title": f"{product_name} - 用户管理服务技术规范书",
+            "product_name": "用户管理服务"
+        },
+        {
+            "docx_name": "监控与日志服务技术规范书.docx",
+            "title": f"{product_name} - 监控与日志服务技术规范书",
+            "product_name": "监控与日志服务"
+        },
+        {
+            "docx_name": "计费与服务管理技术规范书.docx",
+            "title": f"{product_name} - 计费与服务管理规范书",
+            "product_name": "计费与服务管理"
+        }
+    ]
+    
+    # Path to the product overview
+    overview_path = "../overview.txt"
+    
+    # Generate documents for all platforms
+    generate_all_platform_docs(overview_path, platforms)
