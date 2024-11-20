@@ -60,13 +60,28 @@ class DataPreprocessingModuleSpecGenerator:
             技术性强：提供具体的技术信息，包括系统架构、模块功能、输入输出、处理逻辑和部署要求。
             准确性和可靠性：内容必须严格遵循产品描述中的定义，并符合行业标准或技术最佳实践。
             重要注意事项：
-
-            专注于当前模块，不涉及其他模块功能。
+            user_prompt中的产品简述是一个大的范围，其意义是提供该产品的背景知识，其中会涵盖多个模块组成部分，请专注于当前模块，不涉及其他模块功能。
+            整体的逻辑是拆分产品的模块组成部分，然后针对每个模块生成技术规范书，每个模块的技术规范书是独立的，不涉及其他模块。
+            因此生成段落时，应当专注于产品的当前模块，不涉及其他模块。
+            
             使用专业、正式的语言风格，避免含糊或模糊的描述。
             在描述技术内容时，提供尽可能具体的细节，例如关键组件、数据流和测试标准。
             根据平台类型，结合实际应用场景（例如工业、教育或医疗）撰写内容，体现行业相关性和实用性。
+            本次生成是以段落为单位，根据user_prompt去生成对应的段落，而不是整个文档，同时每个段落生成不需要生成生成标题, 例如生成引言段落，不要出现引言标题，直接生成正文即可。
+            如果是大模型或相关产品，需要规定GPU或TPU等硬件要求。
             
-            本次生成是以段落为单位，根据user_prompt去生成对应的段落，而不是整个文档，同时每个段落生成不需要生成生成标题, 例如生成引言段落，不要出现引言标题，直接生成正文即可
+            多使用规定性语言如应该、不得、提供、应支持等，以增强文档的权威性和规范性。
+            语言风格示例:
+            创建技能组
+            - 提供一个用户友好的界面，允许管理员创建新的技能组。
+            - 管理员可以为每个技能组指定一个唯一的名称和描述，以便于识别和管理。
+            - 技能组的创建过程应支持自定义配置，如服务时间、语言能力、专业领域等。
+            管理技能组
+            - 管理员可以编辑已存在的技能组信息，包括修改名称、描述和配置参数。
+            - 提供技能组的启用和禁用功能，允许临时停用某个技能组而不删除其配置。
+            - 技能组配置应支持版本控制，记录历史更改并允许恢复到之前的配置。
+
+            
             """
         
         # 各个部分的PromptTemplate
@@ -77,10 +92,13 @@ class DataPreprocessingModuleSpecGenerator:
                     """
                     {system_message}
                     请编写一段关于{module_name}的技术规范书引言，简要介绍文档的目的和范围，不少于500字。
-                    生成的不是技术规范书的整体, 而是针对该模块的引言段落。
-                    该模块是以下产品的一部分, 请专注于该模块本身：{product_description}
                     请包括文档的目标、涵盖的范围以及相关的参考文档和定义。
-                    示例:
+                    生成的不是技术规范书的整体, 而是针对该模块的引言段落。
+                    该模块是以下产品的一部分, 请专注于该模块本身
+                    
+                    以下是产品简述：{product_description}
+                    
+                    以下是示例:
                     1.1 目的
                     本文档的编制目的是为了定义智能客服系统的技术标准和规范，确保系统开发、部署及运维过程的规范性和一致性。通过对系统的功能、性能、接口、设计和实施要求的详细规定，旨在保障系统能够满足业务需求，同时提升系统的稳定性、安全性和用户体验。本文档将作为项目开发团队、测试团队、运维团队以及相关利益相关者的参考依据，确保各方对系统的理解和期望达成一致。
                     1.2 范围
@@ -117,8 +135,10 @@ class DataPreprocessingModuleSpecGenerator:
                     {system_message}
                     请提供一个{module_name}的系统概述，包括其主要功能和用途, 不少于600字。
                     生成的不是技术规范书的整体, 而是针对该模块的系统概述段落，是整个技术规范书的第二段，第一段是引言，所以专注于系统概述本身，不需要涉及引言或结论等段落。
-                    该模块是以下产品的一部分, 请专注于该模块本身：{product_description}
-                    示例:
+                    该模块是以下产品的一部分, 请专注于该模块本身
+                    以下是产品简述：{product_description}
+                    
+                    以下是示例:
                     2.1 系统功能
                     智能客服系统旨在整合多种通信渠道和客服资源，提供高效、便捷的客户服务体验。以下是系统的主要功能：
                     - 多渠道接入：
@@ -175,9 +195,11 @@ class DataPreprocessingModuleSpecGenerator:
                     {system_message}
                     请详细描述{module_name}的系统架构, 不少于800字。
                     生成的不是技术规范书的整体, 而是针对该模块的系统架构段落。
-                    该模块是以下产品的一部分, 请专注于该模块本身：{product_description}
                     架构描述应包括数据流、处理步骤和关键组件。
-                    示例:
+                    
+                    以下是产品简述：{product_description}
+                    
+                    以下是示例:
                     3.1 总体架构
                     智能客服系统将采用一种模块化、分布式的架构设计，以确保系统的可扩展性、可维护性和高可用性。系统的主要架构分为以下几个层次：
                     3.1.1 前端展示层
@@ -217,10 +239,6 @@ class DataPreprocessingModuleSpecGenerator:
                     {system_message}
                     请详细描述功能“{func_name}”的技术规范段落，不少于600字。
                     
-                    该功能是模块“{module_name}”的重要组成部分，所以生成的不是技术规范书的整体，而是针对该功能的技术规范段落。
-                    模块“{module_name}”又是以下产品的一部分：{product_description}。
-                    请严格聚焦于该功能，避免涉及其他模块或功能。
-
                     技术规范应包括以下内容：
                     1. **功能描述**：概述功能的核心目标、输入输出及其处理流程。
                     2. **技术要求**：列出该功能的关键技术需求，例如性能指标、可用性、响应时间等。
@@ -230,6 +248,9 @@ class DataPreprocessingModuleSpecGenerator:
                     6. **扩展性与可维护性**：描述功能在未来的扩展和维护方面的设计考虑。
 
                     在撰写时，请以清晰、结构化的方式逐点展开，确保内容详尽且专业。
+                    该功能是模块“{module_name}”的重要组成部分，所以生成的不是技术规范书的整体，而是针对该功能的技术规范段落，请严格聚焦于该功能，避免涉及其他模块或功能。。
+                    模块“{module_name}”又是以下产品的一部分
+                    以下是产品简述：{product_description}
                     
                     以下是一个示例:
                     4. 接入渠道技术规范
@@ -292,7 +313,8 @@ class DataPreprocessingModuleSpecGenerator:
                     请描述{module_name}的维护和支持策略，包括维护计划和支持渠道,不少于400字。
                     维护策略应说明{module_name}的维护计划和流程。
                     生成的不是技术规范书的整体, 而是针对该模块的维护与支持段落。
-                    该模块是以下产品的一部分, 请专注于该模块本身：{product_description}
+                    该模块是以下产品的一部分, 请专注于该模块本身，产品简述只提供背景知识和引导
+                    以下是产品简述：{product_description}
                     """
                 )
             )
@@ -378,16 +400,27 @@ class DataPreprocessingModuleSpecGenerator:
             document.add_paragraph(cleaned_paragraph)
 
         # Step 5: 提取功能模块名称
-        module_names_prompt = (
-            f"根据以下产品简述，提取出适合的功能模块名称列表，每个模块名称应准确描述其功能，列表中应指包括模块名称，不要有多余开头或结尾"
-            f"适用于技术规范书的编写，结果以列表形式返回：\n{product_description}"
+        func_names_prompt = (
+            f"""
+            根据以下产品简述和模块名称，提取出适合的功能子模块名称列表，每个模块名称应准确描述其功能，列表中只包括模块名称，不要有多余开头或结尾"
+            适用于技术规范书的编写，结果以列表形式返回：\n
+            请注意产品中涵盖模块，本次是生成该模块的功能子模块，产品简述只做背景参考，不要直接生成产品的所有功能模块，而是专注于产品中该模块的功能子模块拆分\n
+            模块名称: {self.product_name}\n
+            产品简述:
+            {product_description}
+            """
         )
-        module_names_response = self.llm.predict(module_names_prompt)
-        module_names = module_names_response.strip().split('\n')
-        print(f"功能模块有: {module_names}")
+        func_names_response = self.llm.predict(func_names_prompt)
+        # 去掉名称前的无关符号，如 "-"
+        func_names = [
+            name.lstrip('-').strip()  # 去除开头的 "-" 并去除多余空格
+            for name in func_names_response.strip().split('\n')
+        ]
+        
+        print(f"功能模块有: {func_names}")
 
         # Step 6: 为每个功能模块生成技术规范
-        for index, func_name in enumerate(module_names, start=4):  # 从第 4 章开始
+        for index, func_name in enumerate(func_names[1:], start=4):  # 从第 4 章开始
             logger.info(f"生成功能技术规范: {func_name}")
             try:
                 section_paragraph = self.generate_section(
@@ -406,7 +439,7 @@ class DataPreprocessingModuleSpecGenerator:
         
         # 添加维护与支持部分
         try:
-            maintenance_index = len(module_names) + 4  # 最后一部分的索引
+            maintenance_index = len(func_names) + 4  # 最后一部分的索引
             maintenance_paragraph = self.generate_section(
                 prompt_template=self.prompts["maintenance_support"],
                 section_title=f"{maintenance_index}. 维护与支持",
@@ -452,31 +485,46 @@ if __name__ == "__main__":
     # Define the list of platforms
     product_name = "MoE算法V1.0"
     platforms = [
+        # {
+        #     "docx_name": "璇玑玉衡大模型_MoE架构设计规范书.docx",
+        #     "title": f"璇玑玉衡大模型 - 架构设计规范书",
+        #     "product_name": "架构设计"
+        # },
+        # {
+        #     "docx_name": "璇玑玉衡大模型_知识增强技术规范书.docx",
+        #     "title": f"璇玑玉衡大模型 - 知识增强技术规范书",
+        #     "product_name": "知识增强技术"
+        # },
         {
-            "docx_name": "MoE专家网络设计规范书.docx",
-            "title": f"{product_name} - 专家网络设计规范书",
-            "product_name": "专家网络设计"
+            "docx_name": "璇玑玉衡大模型_跨模态处理规范书.docx",
+            "title": f"璇玑玉衡大模型 - 跨模态处理规范书",
+            "product_name": "跨模态处理"
+        },
+        {
+            "docx_name": "璇玑玉衡大模型_检索增强策略规范书.docx",
+            "title": f"璇玑玉衡大模型 - 检索增强策略规范书",
+            "product_name": "检索增强策略"
+        },
+        {
+            "docx_name": "璇玑玉衡大模型_决策增强系统设计规范书.docx",
+            "title": f"璇玑玉衡大模型 - 决策增强系统设计规范书",
+            "product_name": "决策增强系统设计"
+        },
+        {
+            "docx_name": "璇玑玉衡大模型_模型训练与调优手册.docx",
+            "title": f"璇玑玉衡大模型 - 模型训练与调优手册",
+            "product_name": "模型训练与调优"
+        },
+        {
+            "docx_name": "璇玑玉衡大模型_评估与优化策略文档.docx",
+            "title": f"璇玑玉衡大模型 - 评估与优化策略文档",
+            "product_name": "评估与优化策略"
+        },
+        {
+            "docx_name": "璇玑玉衡大模型_部署与运维手册.docx",
+            "title": f"璇玑玉衡大模型 - 部署与运维手册",
+            "product_name": "部署与运维"
         }
-        # {
-        #     "docx_name": "MoE门控机制规范书.docx",
-        #     "title": f"{product_name} - 门控机制规范书",
-        #     "product_name": "门控机制"
-        # },
-        # {
-        #     "docx_name": "MoE训练策略规范书.docx",
-        #     "title": f"{product_name} - 训练策略规范书",
-        #     "product_name": "训练策略"
-        # },
-        # {
-        #     "docx_name": "MoE模型评估与优化规范书.docx",
-        #     "title": f"{product_name} - 模型评估与优化规范书",
-        #     "product_name": "模型评估与优化"
-        # },
-        # {
-        #     "docx_name": "MoE部署与应用规范书.docx",
-        #     "title": f"{product_name} - 部署与应用规范书",
-        #     "product_name": "部署与应用"
-        # }
     ]
     
     # Path to the product overview
