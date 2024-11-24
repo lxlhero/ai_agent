@@ -64,6 +64,8 @@ class DataPreprocessingModuleSpecGenerator:
             根据平台类型，结合实际应用场景（例如工业、教育或医疗）撰写内容，体现行业相关性和实用性。
             本次生成是以段落为单位,根据user_prompt去生成对应的段落,而不是整个文档,同时每个段落生成不需要生成生成标题, 例如生成引言段落，不要出现引言标题，直接生成正文即可。
             如果是大模型或相关产品，需要规定GPU或TPU等硬件要求。
+            如果是软件功能，请规定数据库设计，接口设计等。
+            注意每个段落的目录分级，例如第一个段落引言，需要列出1.1, 1.2等目录，每个段落都需要目录。
             
             多使用规定性语言如应该、不得、提供、应支持等，以增强文档的权威性和规范性。
             语言风格示例:
@@ -214,7 +216,7 @@ class DataPreprocessingModuleSpecGenerator:
             ),
             
             "technical_specification": PromptTemplate(
-                input_variables=["system_message", "product_description", "product_name", "func_name", "func_info"],
+                input_variables=["system_message", "product_description", "product_name", "index", "func_name", "func_info"],
                 template=(
                     """
                     {system_message}
@@ -222,51 +224,46 @@ class DataPreprocessingModuleSpecGenerator:
                     这是该功能的具体子模块和描述，请参考：“{func_info}”
                     
                     技术规范应包括以下内容：
-                    1. 功能描述：概述功能的核心目标、输入输出及其处理流程。
-                    2. 技术要求：列出该功能的关键技术需求，例如性能指标、可用性、响应时间等。
-                    3. 依赖关系：明确该功能是否依赖其他系统、模块或资源。
-                    4. 实现方案：提供高层次的实现细节，包括使用的技术框架、算法或工具, 具体到版本。
-                    5. 部署要求：说明功能的运行环境需求，如硬件、操作系统、依赖库等。
-                    6. 扩展性与可维护性：描述功能在未来的扩展和维护方面的设计考虑。
+                    功能定义：概述功能的核心目标、输入输出及其处理流程。
+                    技术要求：列出该功能的关键技术需求，例如性能指标、可用性、响应时间等。
+                    实现方案：提供高层次的实现细节，包括使用的技术框架、算法或工具, 具体到版本。
+                    数据库设计和接口设计。
+                    部署要求：说明功能的运行环境需求，如硬件、操作系统、依赖库等。
 
                     在撰写时，请以清晰、结构化的方式逐点展开，确保内容详尽且专业。
-                    该功能是模块“{product_name}”的重要组成部分，所以生成的不是技术规范书的整体，而是针对该产品的技术规范段落。
-                    模块“{product_name}”又是以下产品的一部分
+                    该功能是产品“{product_name}”的重要组成部分，所以生成的不是技术规范书的整体，而是针对该功能的技术规范段落。
+                    这是整个技术规范书的第{index}段，请确保段落的目录分级，假设这是规范书的第四段落，其子目录应是4.1，4.2等子目录。
+                    不要出现段落标题，只写段落的内容即可。
                     以下是产品简述：{product_description}
                     
-                    以下是一个示例:
-                    4. 接入渠道技术规范
-                    4.1 桌面网站接入
-                    4.1.1 JavaScript SDK
+                    以下是一个示例,x应替换成实际的段落序号{index}:
+                    
+                    {index}.1 桌面网站接入
+                    x{index}.1.1 JavaScript SDK
                     - 提供JavaScript SDK以供集成到企业桌面网站中，该SDK应包含以下功能：
                     - 用户身份验证：确保用户与系统之间的通信是安全的。
                     - 会话管理：允许创建、维护和结束用户会话。
                     - 消息发送和接收：支持文本、图片、文件等多种消息类型的发送和接收。
                     - 事件监听：能够响应用户交互事件，如点击、输入等。
                     - UI组件：提供标准的聊天窗口UI组件，支持自定义样式以符合企业品牌形象。
-                    4.1.2 通讯机制
+                    {index}.1.2 通讯机制
                     - 系统应支持WebSocket协议，以实现实时、双向的通信。
                     - 对于不支持WebSocket的环境，系统应提供长轮询的备选方案，以保证消息的可靠传输。
                     - 所有通讯应通过HTTPS进行加密，以确保数据传输的安全性。
-                    4.2 移动网站接入
-                    4.2.1 自适应设计
+                    {index}.2 移动网站接入
+                    {index}.2.1 自适应设计
                     - 移动端接入应使用响应式设计，确保UI组件能够根据不同屏幕尺寸进行适配。
                     - SDK应提供与桌面网站接入相同的功能，并优化触摸操作和网络条件变化的响应。
-                    4.3 App接入
-                    4.3.1 移动SDK
+                    {index}.3 App接入
+                    {index}.3.1 移动SDK
                     - 提供适用于iOS和Android平台的SDK，该SDK应包括以下功能：
                     - 原生UI组件：提供原生操作系统风格的聊天窗口组件。
                     - 推送通知：支持系统消息推送，包括新消息通知和会话更新通知。
                     - 网络管理：智能处理网络变化，如断网、重连等情况。
-                    4.3.2 接口文档
+                    {index}.3.2 接口文档
                     - 提供详尽的SDK接口文档，包括安装指南、功能说明、示例代码和常见问题解答。
-                    4.4 微信接入
-                    4.4.1 公众号和小程序
-                    - 集成微信公众号和小程序的客服功能，实现以下接口：
-                    - 消息接收：接收用户在微信中发送的消息。
-                    - 消息回复：允许客服回复用户消息，并支持消息类型多样化。
-                    - 用户事件处理：处理用户的关注、取消关注等事件。
-                    6.3 数据库表设计
+                    
+                    {index}.4 数据库表设计
                     - 用户表设计：
                         - `user_id` INT PRIMARY KEY AUTO_INCREMENT
                         - `username` VARCHAR(255) UNIQUE NOT NULL
@@ -278,17 +275,6 @@ class DataPreprocessingModuleSpecGenerator:
                         - `customer_id` INT NOT NULL
                         - `request_content` TEXT NOT NULL
                         - `status` ENUM('open', 'in_progress', 'closed') NOT NULL
-
-                    #### 7. 接口设计
-                    - 7.1 API设计原则
-                    - 所有API遵循RESTful设计，使用HTTP动词表示操作。
-                    - API版本通过URL路径指定，如`/api/v1/`。
-
-                    - 7.2 API接口列表
-                    - `GET /api/v1/users`: 获取用户列表
-                    - `POST /api/v1/tickets`: 创建新工单
-                    - `PUT /api/v1/tickets/{id}`: 更新工单状态
-
                     """
                 )
             ),
@@ -308,7 +294,7 @@ class DataPreprocessingModuleSpecGenerator:
             
         }
 
-    def generate_text(self, prompt_template, product_description, product_name, func_name = "", func_info = ""):
+    def generate_text(self, prompt_template, product_description, product_name, index, func_name = None, func_info = None, **kwargs):
         """
         Generate text using LLMChain with the provided prompt template.
         """
@@ -316,18 +302,21 @@ class DataPreprocessingModuleSpecGenerator:
         system_message = SystemMessage(content=self.system_message)
 
         # Create the user message using the PromptTemplate
-        if func_name == "":
+        if func_name == None:
+            
             user_prompt = prompt_template.format(
                 system_message=self.system_message,
                 product_description=product_description,
-                product_name=product_name,
+                product_name=product_name
             )
         else:
             # func_name 和 func_info 应该同时不为空，当撰写具体功能技术规范段落时
+            
             user_prompt = prompt_template.format(
                 system_message=self.system_message,
                 product_description=product_description,
                 product_name=product_name,
+                index = index,
                 func_name=func_name,
                 func_info=func_info
             )
@@ -339,17 +328,19 @@ class DataPreprocessingModuleSpecGenerator:
         generated_text = response.content
         logger.info("Generated Text: %s", generated_text)
         return generated_text
+    
+    
 
 
-    def generate_section(self, prompt_template, section_title, product_description, product_name, func_name = "", func_info = "", **kwargs):
+    def generate_section(self, prompt_template, section_title, index, product_description, product_name, func_name = None, func_info = None, **kwargs):
         """
             Generate the specified section of text and add a title and number.
         """
-        
         section_content = self.generate_text(
             prompt_template=prompt_template,
             product_description=product_description,
             product_name=product_name,
+            index = index,
             func_name=func_name,
             func_info=func_info
         )
@@ -450,42 +441,21 @@ class DataPreprocessingModuleSpecGenerator:
             section_paragraph = self.generate_section(
                 prompt_template=section["prompt"],
                 section_title=f"{index}. {section['title']}",
+                index = index,
                 product_description=product_description,
                 product_name=self.product_name
             )
             # 清理多余字符并写入文档
             cleaned_paragraph = section_paragraph.replace('', '').replace('#', '')
             document.add_paragraph(cleaned_paragraph)
-
-        # Step 5: 提取功能模块名称
-        func_names_prompt = (
-            f"""
-            根据以下产品简述，提取出适合的功能模块名称列表，每个模块名称应准确描述其功能，列表中只包括模块名称，不要有多余开头或结尾"
-            适用于技术规范书的编写，结果以列表形式返回：\n
-            请注专注于产品中该模块的功能模块拆分\n
-            产品简述:
-            {product_description}
-            """
-        )
-        
-        func_names_response = self.llm.predict(func_names_prompt)
-        # 去掉名称前的无关符号，如 "-"
-        func_names = [
-            name.lstrip('-').strip()  # 去除开头的 "-" 并去除多余空格
-            for name in func_names_response.strip().split('\n')
-        ]
-        
-        print(f"功能模块有: {func_names}")
         
         # 生成包含功能模块及其子功能描述的JSON
         func_names_json_prompt = f"""
-            根据以下产品简述和功能模块名称列表，生成包含每个功能模块及其子功能描述的JSON。
+            根据以下产品简述，生成相应的功能模块、子模块和子功能描述的JSON。
+            一个产品应有多个功能模块，每个功能模块包含多个子模块，一个子模块对应一个子模块描述。
             每个功能模块至少包含两个及以上的子功能模块。
             产品简述:
             {product_description}
-
-            功能模块名称列表:
-            {func_names}
 
             生成的JSON应符合以下格式：
             [
@@ -546,20 +516,25 @@ class DataPreprocessingModuleSpecGenerator:
             print(f"JSON 解码错误: {e}")
             func_names_json = None
         
+        func_names = [item['module_name'] for item in func_names_info]
+
+        
         # Step 6: 为每个功能模块生成技术规范
-        for index, func_name in enumerate(func_names[1:], start=4):  # 从第 4 章开始
+        for index, func_name in enumerate(func_names[:], start=4):  # 从第 4 章开始
             logger.info(f"生成功能技术规范: {func_name}")
             # 查找与 func_name 匹配的模块
             func_info = next((module for module in func_names_info if module['module_name'] == func_name), None)
+            print(f"func_info: {func_info}")
             func_info_str = self.format_func_info(func_info)
             
-            if func_info is None:
+            if func_info_str is None:
                 logger.error(f"未找到功能名称: {func_name}")
                 continue
             try:
                 section_paragraph = self.generate_section(
                     prompt_template=self.prompts["technical_specification"],
                     section_title=f"{index}. {func_name}技术规范",
+                    index = index,
                     product_description=product_description,
                     product_name=self.product_name,
                     func_name=func_name,
@@ -568,6 +543,10 @@ class DataPreprocessingModuleSpecGenerator:
                 # 清理多余字符并写入文档
                 cleaned_paragraph = section_paragraph.replace('', '').replace('#', '')
                 document.add_paragraph(cleaned_paragraph)
+                print(f"index: {index}")
+            except KeyError as e:
+                logger.error(f"KeyError: Missing key '{e.args[0]}' in generate_text method")
+                logger.error("Traceback details:", exc_info=True)
             except Exception as e:
                 logger.error(f"Error generating technical specification for {product_name}: {e}")
                 logger.error("Traceback details:", exc_info=True)
@@ -579,6 +558,7 @@ class DataPreprocessingModuleSpecGenerator:
             maintenance_paragraph = self.generate_section(
                 prompt_template=self.prompts["maintenance_support"],
                 section_title=f"{maintenance_index}. 维护与支持",
+                index = maintenance_index,
                 product_description=product_description,
                 product_name=self.product_name
             )
