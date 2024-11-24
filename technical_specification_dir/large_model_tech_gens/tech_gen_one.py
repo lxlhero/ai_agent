@@ -130,7 +130,7 @@ class DataPreprocessingModuleSpecGenerator:
                     """
                     {system_message}
                     请提供一个{product_name}的系统概述，包括其主要功能和用途, 不少于600字。
-                    生成的不是技术规范书的整体, 而是针对该产品的系统概述段落，是整个技术规范书的第二段，第一段是引言，所以专注于系统概述本身，不需要涉及引言或结论等段落。
+                    生成的不是技术规范书的整体, 而是针对该产品的系统概述段落，是整个技术规范书的第二段，第一段是引言，所以专注于系统概述本身，不需要涉及引言或系统架构等段落。
                     以下是产品简述：{product_description}
                     
                     以下是示例:
@@ -232,60 +232,48 @@ class DataPreprocessingModuleSpecGenerator:
 
                     在撰写时，请以清晰、结构化的方式逐点展开，确保内容详尽且专业。
                     该功能是产品“{product_name}”的重要组成部分，所以生成的不是技术规范书的整体，而是针对该功能的技术规范段落。
-                    这是整个技术规范书的第{index}段，请确保段落的目录分级，假设这是规范书的第四段落，其子目录应是4.1，4.2等子目录。
+                    这是整个技术规范书的第{index}段， 子目录应该是{index}.1, {index}.2, {index}.3依次类推，请确保段落的目录分级, 要划分子目录。
+                    
                     不要出现段落标题，只写段落的内容即可。
                     以下是产品简述：{product_description}
                     
-                    以下是一个示例,x应替换成实际的段落序号{index}:
-                    
-                    {index}.1 桌面网站接入
-                    x{index}.1.1 JavaScript SDK
-                    - 提供JavaScript SDK以供集成到企业桌面网站中，该SDK应包含以下功能：
-                    - 用户身份验证：确保用户与系统之间的通信是安全的。
-                    - 会话管理：允许创建、维护和结束用户会话。
-                    - 消息发送和接收：支持文本、图片、文件等多种消息类型的发送和接收。
-                    - 事件监听：能够响应用户交互事件，如点击、输入等。
-                    - UI组件：提供标准的聊天窗口UI组件，支持自定义样式以符合企业品牌形象。
-                    {index}.1.2 通讯机制
-                    - 系统应支持WebSocket协议，以实现实时、双向的通信。
-                    - 对于不支持WebSocket的环境，系统应提供长轮询的备选方案，以保证消息的可靠传输。
-                    - 所有通讯应通过HTTPS进行加密，以确保数据传输的安全性。
-                    {index}.2 移动网站接入
-                    {index}.2.1 自适应设计
-                    - 移动端接入应使用响应式设计，确保UI组件能够根据不同屏幕尺寸进行适配。
-                    - SDK应提供与桌面网站接入相同的功能，并优化触摸操作和网络条件变化的响应。
-                    {index}.3 App接入
-                    {index}.3.1 移动SDK
-                    - 提供适用于iOS和Android平台的SDK，该SDK应包括以下功能：
-                    - 原生UI组件：提供原生操作系统风格的聊天窗口组件。
-                    - 推送通知：支持系统消息推送，包括新消息通知和会话更新通知。
-                    - 网络管理：智能处理网络变化，如断网、重连等情况。
-                    {index}.3.2 接口文档
-                    - 提供详尽的SDK接口文档，包括安装指南、功能说明、示例代码和常见问题解答。
-                    
-                    {index}.4 数据库表设计
-                    - 用户表设计：
-                        - `user_id` INT PRIMARY KEY AUTO_INCREMENT
-                        - `username` VARCHAR(255) UNIQUE NOT NULL
-                        - `password_hash` VARCHAR(255) NOT NULL
-                        - `role` ENUM('admin', 'agent', 'customer') NOT NULL
+                    以下是一个示例，这里假设是第4段落，仅供参考，具体子目录要看{index}是多少:
+                    4.1 桌面网站接入
+                    4.1.1 JavaScript SDK
+                     提供JavaScript SDK以供集成到企业桌面网站中，该SDK应包含以下功能：
+                     用户身份验证：确保用户与系统之间的通信是安全的。
+                     会话管理：允许创建、维护和结束用户会话。
+                     消息发送和接收：支持文本、图片、文件等多种消息类型的发送和接收。
+                     事件监听：能够响应用户交互事件，如点击、输入等。
+                     UI组件：提供标准的聊天窗口UI组件，支持自定义样式以符合企业品牌形象。
+                    4.1.2 通讯机制
+                     系统应支持WebSocket协议，以实现实时、双向的通信。
+                     对于不支持WebSocket的环境，系统应提供长轮询的备选方案，以保证消息的可靠传输。
+                     所有通讯应通过HTTPS进行加密，以确保数据传输的安全性。
+                    4.2 移动网站接入
+                    4.2.1 自适应设计
+                     移动端接入应使用响应式设计，确保UI组件能够根据不同屏幕尺寸进行适配。
+                     SDK应提供与桌面网站接入相同的功能，并优化触摸操作和网络条件变化的响应。
+                    4.3 数据库表设计
+                     用户表设计：
+                         `user_id` INT PRIMARY KEY AUTO_INCREMENT
+                         `username` VARCHAR(255) UNIQUE NOT NULL
+                         `password_hash` VARCHAR(255) NOT NULL
+                         `role` ENUM('admin', 'agent', 'customer') NOT NULL
 
-                    - 工单表设计：
-                        - `ticket_id` INT PRIMARY KEY AUTO_INCREMENT
-                        - `customer_id` INT NOT NULL
-                        - `request_content` TEXT NOT NULL
-                        - `status` ENUM('open', 'in_progress', 'closed') NOT NULL
                     """
+                    
                 )
             ),
             "maintenance_support": PromptTemplate(
-                input_variables=["system_message", "product_description", "product_name"],
+                input_variables=["system_message", "product_description", "product_name", "index"],
                 template=(
                     """
                     {system_message}
                     请描述{product_name}的维护和支持策略，包括维护计划和支持渠道,不少于400字。
                     维护策略应说明{product_name}的维护计划和流程。
                     生成的不是技术规范书的整体, 而是针对该模块的维护与支持段落。
+                    这是整个技术规范书的第{index}段， 子目录应该是{index}.1, {index}.2, {index}.3依次类推，请确保段落的目录分级, 要划分子目录
                     以下是产品简述：{product_description}
                     """
                 )
@@ -336,6 +324,7 @@ class DataPreprocessingModuleSpecGenerator:
         """
             Generate the specified section of text and add a title and number.
         """
+        
         section_content = self.generate_text(
             prompt_template=prompt_template,
             product_description=product_description,
@@ -426,28 +415,6 @@ class DataPreprocessingModuleSpecGenerator:
         with open(self.overview_path, 'r', encoding='utf-8') as f:
             product_description = f.read()
 
-        # 创建Word文档并添加标题
-        document = docx.Document()
-        document.add_heading(self.title, level=1)
-
-        sections = [
-        {"title": "引言", "prompt": self.prompts["introduction"]},
-        {"title": "系统概述", "prompt": self.prompts["system_overview"]},
-        {"title": "系统架构", "prompt": self.prompts["system_architecture"]},
-        ]
-
-        # Step 4: 生成前三个部分
-        for index, section in enumerate(sections, start=1):
-            section_paragraph = self.generate_section(
-                prompt_template=section["prompt"],
-                section_title=f"{index}. {section['title']}",
-                index = index,
-                product_description=product_description,
-                product_name=self.product_name
-            )
-            # 清理多余字符并写入文档
-            cleaned_paragraph = section_paragraph.replace('', '').replace('#', '')
-            document.add_paragraph(cleaned_paragraph)
         
         # 生成包含功能模块及其子功能描述的JSON
         func_names_json_prompt = f"""
@@ -517,6 +484,29 @@ class DataPreprocessingModuleSpecGenerator:
             func_names_json = None
         
         func_names = [item['module_name'] for item in func_names_info]
+        
+        # 创建Word文档并添加标题
+        document = docx.Document()
+        document.add_heading(self.title, level=1)
+
+        sections = [
+        {"title": "引言", "prompt": self.prompts["introduction"]},
+        {"title": "系统概述", "prompt": self.prompts["system_overview"]},
+        {"title": "系统架构", "prompt": self.prompts["system_architecture"]},
+        ]
+
+        # Step 4: 生成前三个部分
+        for index, section in enumerate(sections, start=1):
+            section_paragraph = self.generate_section(
+                prompt_template=section["prompt"],
+                section_title=f"{index}. {section['title']}",
+                index = index,
+                product_description=product_description,
+                product_name=self.product_name
+            )
+            # 清理多余字符并写入文档
+            cleaned_paragraph = section_paragraph.replace('', '').replace('#', '')
+            document.add_paragraph(cleaned_paragraph)
 
         
         # Step 6: 为每个功能模块生成技术规范
@@ -560,7 +550,9 @@ class DataPreprocessingModuleSpecGenerator:
                 section_title=f"{maintenance_index}. 维护与支持",
                 index = maintenance_index,
                 product_description=product_description,
-                product_name=self.product_name
+                product_name=self.product_name,
+                func_name=func_name,
+                func_info=func_info_str
             )
             cleaned_paragraph = maintenance_paragraph.replace('', '').replace('#', '')
             document.add_paragraph(cleaned_paragraph)
@@ -601,12 +593,11 @@ def generate_all_platform_docs(overview_path, platforms):
 
 if __name__ == "__main__":
     # Define the list of platforms
-    product_name = "MoE算法V1.0"
     platforms = [
         {
-            "docx_name": "Agent平台功能定制开发技术规范书.docx",
-            "title": f"Agent平台功能定制开发技术规范书",
-            "product_name": "Agent平台功能定制开发"
+            "docx_name": "多租户管理系统技术规范书.docx",
+            "title": f"多租户管理系统技术规范书",
+            "product_name": "多租户管理系统"
         }
         
     ]
