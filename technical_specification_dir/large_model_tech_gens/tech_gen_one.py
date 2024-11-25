@@ -610,9 +610,9 @@ if __name__ == "__main__":
     # Define the list of platforms
     platforms = [
         {
-            "docx_name": "低代码开发平台技术规范书.docx",
-            "title": "低代码开发平台技术规范书",
-            "product_name": "低代码开发平台"
+            "docx_name": "多租户管理系统技术规范书.docx",
+            "title": "多租户管理系统技术规范书",
+            "product_name": "多租户管理系统"
         }
         
     ]
