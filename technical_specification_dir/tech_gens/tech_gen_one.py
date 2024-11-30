@@ -60,6 +60,7 @@ class DataPreprocessingModuleSpecGenerator:
             重要注意事项：
             user_prompt中的产品简述提供该产品的背景知识和功能，帮助你去撰写技术规范书。
             使用专业、正式的语言风格，避免含糊或模糊的描述。
+            内容中不要出现*这个符号。
             在描述技术内容时，提供尽可能具体的细节，例如关键组件、数据流和测试标准。
             根据平台类型，结合实际应用场景（例如工业、教育或医疗）撰写内容，体现行业相关性和实用性。
             本次生成是以段落为单位,根据user_prompt去生成对应的段落,而不是整个文档,同时每个段落生成不需要生成生成标题, 例如生成引言段落，不要出现引言标题，直接生成正文即可。
@@ -232,7 +233,9 @@ class DataPreprocessingModuleSpecGenerator:
                     功能定义：概述功能的核心目标、输入输出及其处理流程。
                     技术要求：列出该功能的关键技术需求，例如性能指标、可用性、响应时间等。
                     实现方案：提供高层次的实现细节，包括使用的技术框架、算法或工具, 具体到版本。
-                    数据库设计和接口设计。如果是平台类或功能类产品, 应根据架构设计,详细描述数据库表设计、接口设计、API设计等， 如果是前端功能，则不要涉及数据库设计等内容。
+                    数据库设计和接口设计。如果是平台类或功能类产品, 应根据架构设计,详细描述数据库表设计、接口设计、API设计等， 
+                    注意，如果不是后端功能，则不要涉及数据库设计等内容。
+                    如果是大模型相关技术，请详细说明和规范模型相关的核心技术和设计逻辑。
                     部署要求：说明功能的运行环境需求，如硬件、操作系统、依赖库等。
                     接入方式: 说明用户如何接入该功能，如浏览器接入，微信接入等。
 
@@ -262,10 +265,12 @@ class DataPreprocessingModuleSpecGenerator:
                      SDK应提供与桌面网站接入相同的功能，并优化触摸操作和网络条件变化的响应。
                     4.3 数据库表设计
                      用户表设计：
-                         `user_id` INT PRIMARY KEY AUTO_INCREMENT
-                         `username` VARCHAR(255) UNIQUE NOT NULL
-                         `password_hash` VARCHAR(255) NOT NULL
-                         `role` ENUM('admin', 'agent', 'customer') NOT NULL
+                        CREATE TABLE users (
+                            `user_id` INT AUTO_INCREMENT PRIMARY KEY,
+                            `username` VARCHAR(255) UNIQUE NOT NULL,
+                            `password_hash` VARCHAR(255) NOT NULL,
+                            `role` ENUM('admin', 'agent', 'customer') NOT NULL
+                        );
 
                     """
                     
@@ -613,9 +618,9 @@ if __name__ == "__main__":
     # Define the list of platforms
     platforms = [
         {
-            "docx_name": "Agent功能优化技术规范书.docx",
-            "title": "Agent功能优化技术规范书",
-            "product_name": "Agent功能优化"
+            "docx_name": "OpenStack平台技术规范书.docx",
+            "title": "OpenStack平台技术规范书",
+            "product_name": "OpenStack平台"
         }
         
     ]
