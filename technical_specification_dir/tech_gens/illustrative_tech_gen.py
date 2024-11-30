@@ -25,7 +25,6 @@ from openpyxl.styles import Alignment
 # 说明性质的技术规范书
 
 
-
 # 从环境变量中获取 OPENAI_API_KEY
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
