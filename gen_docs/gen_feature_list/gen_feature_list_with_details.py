@@ -20,7 +20,7 @@ from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Alignment
 
-# 根据产品简述生成页面级别的功能清单
+# 根据产品结束和采购报价excel生成页面级别的功能清单
 
 # 从环境变量中获取 OPENAI_API_KEY
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -34,11 +34,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class DataPreprocessingModuleSpecGenerator:
-    def __init__(self, overview_path):
+    def __init__(self, overview_path, purchase_excel_path):
         # 初始化参数
         self.embeddings = OpenAIEmbeddings()
         self.chroma_db = Chroma(embedding_function=self.embeddings)
         self.overview_path = overview_path
+        self.purchase_excel_path = purchase_excel_path
 
     # 提取并保存采购报价单excel
     def save_func_names_json_to_excel(self, func_names_json, output_file_path):
@@ -119,7 +120,38 @@ class DataPreprocessingModuleSpecGenerator:
         # Save the Excel file
         wb.save(output_file_path)
 
-    
+    def excel_to_json(self):
+        # 读取上传的Excel文件
+        excel_data = pd.read_excel(self.purchase_excel_path)
+
+        # 填充空白单元格，对于模块名称和功能模块列，使用向前填充的方法
+        excel_data['模块名称'] = excel_data['模块名称'].fillna(method='ffill')
+        excel_data['功能模块'] = excel_data['功能模块'].fillna(method='ffill')
+
+        # 创建一个空的列表来存储结果
+        result = []
+
+        # 按模块名称和功能模块分组
+        for module_name, group in excel_data.groupby(['模块名称', '功能模块']):
+            # 获取当前模块名称和功能模块
+            current_module_name, current_function_module = module_name
+            if "合计" in current_module_name:
+                continue
+
+            # 获取当前功能模块的所有详细说明
+            details = group['详细说明'].tolist()
+
+            # 将当前功能模块及其详细说明添加到结果列表中
+            result.append({
+                '模块名称': current_module_name,
+                '功能模块': current_function_module,
+                '详细说明': details
+            })
+
+        # 将结果列表转换为JSON格式
+        json_data = pd.json_normalize(result)
+
+        return json_data.to_json(orient='records', force_ascii=False)
 
     def process(self):
         self.llm = ChatOpenAI(model="gpt-4o-mini")
@@ -128,17 +160,19 @@ class DataPreprocessingModuleSpecGenerator:
         with open(self.overview_path, 'r', encoding='utf8') as f:
             product_description = f.read()
 
-        
+        # 读取采购报价单excel
+        product_details = self.excel_to_json()
 
         # 生成包含功能模块及其子功能描述的JSON
         func_names_json_prompt = (
-            "根据以下产品简述，生成页面级的功能清单，包括模块、功能、功能页面和功能概述的JSON。\n"
+            "根据以下产品简述和功能模块信息，生成页面级的功能清单，包括模块、功能、功能页面和功能概述的JSON。\n"
             "一个产品应有多个模块，每个模块包含多个功能，一个功能有多个功能页面，一个功能页面对应一个功能页面概述。\n"
-            "请仔细分析拆分产品简述，至少生成4个模块, 每个模块至少包含六个个及以上的功能，每个功能至少有四个页面，功能页面概述需要详细描述该页面的功能\n"
+            "请综合考虑产品简述和功能模块信息，至少生成4个模块, 每个模块至少包含六个个及以上的功能，每个功能至少有四个页面，功能页面概述需要详细描述该页面的功能\n"
             "产品简述:\n"
             f"{product_description}\n\n"
-            
-            "生成的JSON必须严格符合以下格式, 注意这里只有一个模块，只是一个示例，具体的功能要根据产品实际情况定义：\n"
+            "功能模块信息:\n"
+            f"{product_details}\n\n"
+            "生成的JSON应符合以下格式, 注意这里只有一个模块，只是一个示例，具体的功能要根据产品实际情况定义：\n"
             "{\n"
             "  \"modules\": [\n"
             "    {\n"
@@ -199,7 +233,7 @@ class DataPreprocessingModuleSpecGenerator:
 
         # 使用LLM生成JSON
         func_names_json_response = self.llm.predict(func_names_json_prompt)
-        
+
         try:
             # Strip leading/trailing whitespace and newlines
             stripped_response = func_names_json_response.strip().strip('```json')
@@ -214,13 +248,11 @@ class DataPreprocessingModuleSpecGenerator:
             # Handle JSON decoding errors
             print(f"JSON decoding error: {e}")
             func_names_info = None  # Or set to a default value
-            logger.error("Traceback details:", exc_info=True)
 
         except Exception as e:
             # Handle any other unexpected errors
             print(f"An error occurred: {e}")
             func_names_info = None  # Or set to a default value
-            logger.error("Traceback details:", exc_info=True)
         try:
             self.save_func_names_json_to_excel(func_names_info, "./功能清单.xlsx")
             print(f"功能清单已保存")
@@ -233,9 +265,11 @@ if __name__ == "__main__":
 
     # Path to the product overview
     overview_path = "./overview.txt"
+    purchase_excel_path = "/Users/liangxiuliang/Desktop/生成文档/20241129/20241129资料/基于机器学习的民航指挥智能态势感知系统实施项目/民航指挥态势感知管理系统采购报价单模板.xlsx"
 
     generator = DataPreprocessingModuleSpecGenerator(
             overview_path=overview_path,
+            purchase_excel_path=purchase_excel_path
         )
     try:
         generator.process()
