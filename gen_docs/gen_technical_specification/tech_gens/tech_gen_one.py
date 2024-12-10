@@ -22,9 +22,8 @@ from openpyxl.styles import Alignment
 
 
 
-# 普通技术规范书生成器
+# 通用技术规范书生成器
 # 根据产品简述生成技术规范书
-
 
 
 # 从环境变量中获取 OPENAI_API_KEY
@@ -668,9 +667,9 @@ if __name__ == "__main__":
     # Define the list of platforms
     platforms = [
         {
-            "docx_name": "虚拟仿真技术支持的智能产品研发优化管理平台技术规范书.docx",
-            "title": "虚拟仿真技术支持的智能产品研发优化管理平台技术规范书",
-            "product_name": "虚拟仿真技术支持的智能产品研发优化管理平台"
+            "docx_name": "分布式任务调度模块组件技术规范书.docx",
+            "title": "分布式任务调度模块组件技术规范书",
+            "product_name": "分布式任务调度模块组件"
         }
         
     ]
