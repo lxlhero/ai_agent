@@ -17,6 +17,6 @@ def list_last_segments_of_subdirectories(directory_path, output_file):
                 f.write(last_segment + '\n') 
 
 if __name__ == "__main__":
-    directory_path = "/Users/liangxiuliang/Desktop/生成文档/20241206进度/技术规范书_中金汇_20241209"
-    output_file = "技术规范书进度_20241211.txt"
+    directory_path = "/Users/liangxiuliang/Desktop/生成文档/功能列表-20241209/20241209"
+    output_file = "功能列表进度_20241210.txt"
     list_last_segments_of_subdirectories(directory_path, output_file)

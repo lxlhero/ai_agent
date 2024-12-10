@@ -197,6 +197,7 @@ class DataPreprocessingModuleSpecGenerator:
             "}"
         )
 
+        print("开始生成功能清单...")
         # 使用LLM生成JSON
         func_names_json_response = self.llm.predict(func_names_json_prompt)
         
