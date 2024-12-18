@@ -46,8 +46,9 @@ class DataPreprocessingModuleSpecGenerator:
         excel_data = pd.read_excel(self.feature_excel_path)
 
         # 填充空白单元格，对于模块名称和功能模块列，使用向前填充的方法
-        excel_data['模块名称'] = excel_data['模块名称'].fillna(method='ffill')
-        excel_data['功能模块'] = excel_data['功能模块'].fillna(method='ffill')
+        excel_data['模块'] = excel_data['模块'].fillna(method='ffill')
+        excel_data['功能'] = excel_data['功能'].fillna(method='ffill')
+        excel_data['功能页面'] = excel_data['功能页面'].fillna(method='ffill')
 
         # 创建一个空的列表来存储结果
         result = []
@@ -82,26 +83,26 @@ class DataPreprocessingModuleSpecGenerator:
         with open(self.overview_path, 'r', encoding='utf8') as f:
             product_description = f.read()
 
-        with open('./sample_test_method.txt', 'r', encoding='utf8') as f:
+        with open('/Users/yangbo/projects/llm/docreator/ai_agent/gen_docs/gen_test_docs/sample_test_method.txt', 'r', encoding='utf8') as f:
             sample_test_method = f.read()
 
-        with open('./sample_test_record.txt', 'r', encoding='utf8') as f:
-            sample_test_record = f.read()
+        with open('/Users/yangbo/projects/llm/docreator/ai_agent/gen_docs/gen_test_docs/sample_test_record.txt', 'r', encoding='utf8') as f:
+            sample_test_report = f.read()
 
         # 读取采购报价单excel
         product_details = self.excel_to_json()
 
-        template = PromptTemplate.from_file("product_test.txt")
+        template = PromptTemplate.from_file("/Users/yangbo/projects/llm/docreator/ai_agent/gen_docs/gen_test_docs/product_test.txt")
         prompt = template.format(
             product_description=product_description,
             product_details=product_details,
             sample_test_method=sample_test_method,
-            sample_test_record=sample_test_record
+            sample_test_report=sample_test_report
         )
 
         # 使用LLM生成JSON
-        result = self.llm.predict(prompt)
-        print(f"llm生成: {result}")
+        result = self.llm.invoke(prompt)
+        print(f"llm生成: {result.content}")
         # try:
         #     # Strip leading/trailing whitespace and newlines
         #     stripped_response = func_names_json_response.strip().strip('```json')
@@ -132,8 +133,8 @@ if __name__ == "__main__":
     # Define the list of platforms
 
     # Path to the product overview
-    overview_path = "./overview.txt"
-    feature_excel_path = "./featurelist/基于机器学习的民航指挥智能态势感知系统实施项目功能/功能清单.xlsx"
+    overview_path = "/Users/yangbo/projects/llm/docreator/ai_agent/gen_docs/gen_test_docs/overview.txt"
+    feature_excel_path = "/Users/yangbo/projects/llm/docreator/ai_agent/featurelist/基于机器学习的民航指挥智能态势感知系统实施项目功能/功能清单.xlsx"
 
     generator = DataPreprocessingModuleSpecGenerator(
             overview_path=overview_path,
