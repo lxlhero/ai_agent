@@ -97,7 +97,7 @@ class DataPreprocessingModuleSpecGenerator:
         with open(f'{folder}/sample_test_method.txt', 'r', encoding='utf8') as f:
             sample_test_method = f.read()
 
-        with open(f'{folder}/sample_test_record.txt', 'r', encoding='utf8') as f:
+        with open(f'{folder}/sample_test_report.txt', 'r', encoding='utf8') as f:
             sample_test_report = f.read()
 
         # 读取采购报价单excel
@@ -128,33 +128,21 @@ class DataPreprocessingModuleSpecGenerator:
         with open(f'{folder}/template_test_method.txt', 'r', encoding='utf8') as f:
             template_test_method = f.read()
         with open(f'{folder}/result.md', 'w', encoding='utf8') as f:
-            f.write(template_test_method.replace("{test_range}", test_range).replace("{function_test}", function_test).replace("{key_function_test_case}", key_function_test_case))
+            test_method = template_test_method.replace("{test_range}", test_range).replace("{function_test}", function_test).replace("{key_function_test_case}", key_function_test_case)
+            f.write(test_method)
 
-        # try:
-        #     # Strip leading/trailing whitespace and newlines
-        #     stripped_response = func_names_json_response.strip().strip('```json')
-
-        #     # Parse the stripped response into JSON
-        #     func_names_info = json.loads(stripped_response)
-
-        #     # Use func_names_info as needed
-        #     print("功能详情:", func_names_info)
-
-        # except json.JSONDecodeError as e:
-        #     # Handle JSON decoding errors
-        #     print(f"JSON decoding error: {e}")
-        #     func_names_info = None  # Or set to a default value
-
-        # except Exception as e:
-        #     # Handle any other unexpected errors
-        #     print(f"An error occurred: {e}")
-        #     func_names_info = None  # Or set to a default value
-        # try:
-        #     self.save_func_names_json_to_excel(func_names_info, "./功能清单.xlsx")
-        #     print(f"功能清单已保存")
-        # except json.JSONDecodeError as e:
-        #     print(f"JSON 解码错误: {e}")
-        #     func_names_json = None
+        # 调用llm生成测试报告
+        prompt_report = PromptTemplate.from_file(f"{folder}/template_prompt_report.txt")
+        prompt_report = prompt_report.format(
+            sample_test_report=sample_test_report,
+            product_description=product_description,
+            product_details=product_details,
+            test_method=test_method
+        )
+        result_report = self.llm.invoke(prompt_report)
+        print(f"llm生成测试报告: {result_report.content}")
+        with open(f'{folder}/result_report.md', 'w', encoding='utf8') as f:
+            f.write(result_report.content)
 
 if __name__ == "__main__":
     # Define the list of platforms
