@@ -20,7 +20,7 @@ from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Alignment
 
-# 根据产品结束和采购报价excel生成页面级别的功能清单
+# 根据产品简述和采购报价excel生成页面级别的功能清单
 
 # 从环境变量中获取 OPENAI_API_KEY
 openai_api_key = os.getenv("OPENAI_API_KEY")
