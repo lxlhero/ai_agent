@@ -239,6 +239,7 @@ class DataPreprocessingModuleSpecGenerator:
                     这是该功能的具体子模块和描述，请参考：“{func_info}”
                     技术规范需要涵盖该功能的所有子模块技术要求， 并根据你对技术规范的理解，请尽量详细描述，进行技术和架构上的扩展。
                     注意，每一个子模块都需要根据大模型优化技术详细规定其核心技术和设计逻辑，以及实现方案。
+                    注意，要多使用大模型相关术语和技术
                     
                     技术规范应包括以下内容：
                     功能定义：概述功能的核心目标、优化的目标、输入输出、约束条件等。
@@ -589,9 +590,15 @@ class DataPreprocessingModuleSpecGenerator:
                 logger.error("Traceback details:", exc_info=True)
 
         
-        # 添加维护与支持部分
+       
         try:
-            maintenance_index = len(func_names) + 4  
+             # 添加技术资源要求
+            resource_index = len(func_names) + 4
+            resource_title=f"{resource_index}. 技术资源要求"
+            document.add_paragraph(resource_title)
+            
+             # 添加维护与支持部分
+            maintenance_index = len(func_names) + 5
             maintenance_paragraph = self.generate_section(
                 prompt_template=self.prompts["maintenance_support"],
                 section_title=f"{maintenance_index}. 维护与支持",
@@ -609,7 +616,7 @@ class DataPreprocessingModuleSpecGenerator:
             
         # 保存文档
         document.save(self.docx_name)
-        logger.info(f"{self.product_name}技术规范书已保存为 {self.docx_name}")
+        logger.info(f"{self.product_name}技术需求文档已保存为 {self.docx_name}")
 
 
 
@@ -642,9 +649,9 @@ if __name__ == "__main__":
     # Define the list of platforms
     platforms = [
         {
-            "docx_name": "大模型剪枝压缩算法调优技术规范书.docx",
-            "title": "大模型剪枝压缩算法调优技术规范书",
-            "product_name": "大模型剪枝压缩算法调优"
+            "docx_name": "知识蒸馏平台和合成数据管理平台多模态合成数据生成引擎技术需求文档.docx",
+            "title": "知识蒸馏平台和合成数据管理平台多模态合成数据生成引擎技术需求文档",
+            "product_name": "知识蒸馏平台和合成数据管理平台多模态合成数据生成引擎"
         }
         
     ]
