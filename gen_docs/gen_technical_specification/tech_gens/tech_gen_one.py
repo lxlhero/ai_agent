@@ -132,7 +132,7 @@ class DataPreprocessingModuleSpecGenerator:
                 template=(
                     """
                     {system_message}
-                    请提供一个{product_name}的系统概述，包括其主要功能和用途, 不少于2000字。
+                    请提供一个{product_name}的系统概述，包括其主要功能和用途, 不少于3000字。
                     生成的不是技术规范书的整体, 而是针对该产品的系统概述段落，是整个技术规范书的第二段，第一段是引言，所以专注于系统概述本身，不需要涉及引言或系统架构等段落。
                     以下是产品简述：{product_description}
                     
@@ -183,7 +183,7 @@ class DataPreprocessingModuleSpecGenerator:
                 template=(
                     """
                     {system_message}
-                    请详细描述{product_name}的系统架构, 不少于2000字。
+                    请详细描述{product_name}的系统架构, 不少于3000字。
                     生成的不是技术规范书的整体, 而是针对该产品的系统架构段落。
                     架构描述应包括数据流、处理步骤和关键组件。
                     根据你对系统架构的理解，请尽量详细描述，进行技术和架构上的扩展。
@@ -234,7 +234,7 @@ class DataPreprocessingModuleSpecGenerator:
                 template=(
                     """
                     {system_message}
-                    请详细描述功能“{func_name}”的技术规范段落, 不少于2000字。
+                    请详细描述功能“{func_name}”的技术规范段落, 不少于5000字。
                     这是该功能的具体子模块和描述，请参考：“{func_info}”
                     技术规范需要涵盖该功能的所有子模块技术要求， 并根据你对技术规范的理解，请尽量详细描述，进行技术和架构上的扩展。
                     
@@ -372,7 +372,7 @@ class DataPreprocessingModuleSpecGenerator:
                 template=(
                     """
                     {system_message}
-                    请描述{product_name}的维护和支持策略，包括维护计划和支持渠道,不少于400字。
+                    请描述{product_name}的维护和支持策略，包括维护计划和支持渠道,不少于1000字。
                     注意，在生成维护和支持策略之前，添加一个段落，标题为技术资源要求, 不需要有内容。
                     维护策略应说明{product_name}的维护计划和流程。
                     生成的不是技术规范书的整体, 而是针对该模块的维护与支持段落。
@@ -536,7 +536,7 @@ class DataPreprocessingModuleSpecGenerator:
             根据以下产品简述，生成相应的功能模块、子模块和子功能描述的JSON。
             一个产品应有多个功能模块，每个功能模块包含多个子模块，一个子模块对应一个子模块描述。
             注意！如果产品简述中有子项目，那么拆分时要根据子项目去拆分功能模块,注意，一个子项目应该对应多个模块,且模块名中要有所属的子项目名称。
-            至少生6个及以上功能模块, 每个功能模块至少包含5个及以上的子功能模块。
+            至少生16个及以上功能模块, 每个功能模块至少包含6个及以上的子功能模块。
             产品简述:
             {product_description}
 
@@ -683,7 +683,7 @@ class DataPreprocessingModuleSpecGenerator:
             
         # 保存文档
         document.save(self.docx_name)
-        logger.info(f"{self.product_name}技术规范书已保存为 {self.docx_name}")
+        logger.info(f"{self.product_name}技术需求文档已保存为 {self.docx_name}")
 
 
 
@@ -716,9 +716,9 @@ if __name__ == "__main__":
     # Define the list of platforms
     platforms = [
         {
-            "docx_name": "AI预问诊算法系统技术需求文档.docx",
-            "title": " AI预问诊算法系统技术需求文档",
-            "product_name": " AI预问诊算法系统"
+            "docx_name": "康养数据管理及医图诊断模型训练系统技术需求文档.docx",
+            "title": " 康养数据管理及医图诊断模型训练系统技术需求文档",
+            "product_name": "康养数据管理及医图诊断模型训练系统"
         }
         
     ]
